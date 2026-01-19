@@ -1,3 +1,3 @@
-# caco_flutter_blog
+# cacoflutterblog
 
-A new Flutter project.
+A port of 'cacocacoblog' to Flutter. Optimized for mobile devices.

@@ -1,10 +1,12 @@
 import 'package:caco_flutter_blog/core/common/widgets/loader.dart';
+import 'package:caco_flutter_blog/core/theme/app_palette.dart';
 import 'package:caco_flutter_blog/core/utils/show_snackbar.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/pages/Login.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/pages/write_new_blog.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/widgets/alerts.dart';
+import 'package:caco_flutter_blog/features/blog/presentation/widgets/blog_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,7 +62,15 @@ class _BlogPageState extends State<BlogPage> {
               itemCount: state.blogs.length,
               itemBuilder: (context, index) {
                 final blog = state.blogs[index];
-                return Text(blog.title);
+                return BlogCard(
+                  blog: blog, 
+                  color: 
+                    index % 3 == 0 
+                    ? AppPalette.cardColor1
+                    : index % 3 == 1
+                      ? AppPalette.cardColor2
+                      : AppPalette.cardColor3,
+                );
               },
             );
           }

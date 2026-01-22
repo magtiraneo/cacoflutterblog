@@ -5,6 +5,7 @@ import 'package:caco_flutter_blog/features/auth/presentation/bloc/auth_bloc.dart
 import 'package:caco_flutter_blog/features/auth/presentation/pages/SignUp.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/widgets/auth_button.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/widgets/auth_field.dart';
+import 'package:caco_flutter_blog/features/blog/presentation/pages/blog_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

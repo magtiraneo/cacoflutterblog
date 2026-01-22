@@ -6,11 +6,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class BlogSupabaseSource {
   Future<BlogModel> uploadBlog(BlogModel blog);
+  Future<BlogModel> updateBlog(BlogModel blog);
   Future<String> uploadBlogImage({
     required File image,
     required BlogModel blog,
   });
   Future<List<BlogModel>> getAllBlogs();
+  Future<void> deleteBlog(String blogId);
 }
 
 class BlogSupabaseSourceImpl implements BlogSupabaseSource {
@@ -24,6 +26,22 @@ class BlogSupabaseSourceImpl implements BlogSupabaseSource {
         await supabaseClient.from('posts').insert(blog.toJson()).select();
       
       return BlogModel.fromJson(blogData.first);
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<BlogModel> updateBlog(BlogModel blog) async {
+    try {
+      final blogData = 
+        await supabaseClient.from('posts').update(blog.toJson()).eq('id', blog.id);
+      
+      return BlogModel.fromJson(blogData.first);
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -38,6 +56,8 @@ class BlogSupabaseSourceImpl implements BlogSupabaseSource {
       );
 
       return supabaseClient.storage.from('blog-images').getPublicUrl(blog.id);
+    } on StorageException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -52,8 +72,21 @@ class BlogSupabaseSourceImpl implements BlogSupabaseSource {
       return blogs.map((blog) => BlogModel.fromJson(blog).copyWith(
         username: blog['profiles']['username']
       )).toList();
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
+    }
+  }
+  
+  @override
+  Future<void> deleteBlog(String blogId) async {
+    final res = await supabaseClient
+      .from('posts')
+      .delete()
+      .eq('id', blogId);
+    if (res.error != null) {
+      throw ServerException(res.error!.message);
     }
   }
 }

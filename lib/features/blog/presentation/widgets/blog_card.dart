@@ -1,7 +1,10 @@
 import 'package:caco_flutter_blog/core/theme/app_palette.dart';
 import 'package:caco_flutter_blog/features/blog/domain/entities/blog.dart';
+import 'package:caco_flutter_blog/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:caco_flutter_blog/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/pages/blog_viewer_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlogCard extends StatelessWidget {
   final Blog blog;
@@ -15,8 +18,16 @@ class BlogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(context, BlogViewerPage.route(blog));
+      onTap: () async {
+        final deleted = Navigator.push(
+          context, 
+          BlogViewerPage.route(blog)
+        );
+        if (deleted == true) {
+          context.read<BlogBloc>().add(BlogFetchAllBlogs());
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Blog list refreshed')));
+        }
       },
       child: Container(
           height: 200,

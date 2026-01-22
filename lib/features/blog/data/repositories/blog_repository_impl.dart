@@ -42,6 +42,37 @@ class BlogRepositoryImpl implements BlogRepository {
         return Left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, Blog>> updateBlog({
+    required File image, 
+    required String title, 
+    required String content, 
+    required String user_id,
+    }) async {
+      try {
+        BlogModel blogModel = BlogModel(
+          id: const Uuid().v1(), 
+          user_id: user_id, 
+          title: title, 
+          content: content,
+          image_url: '', 
+          username: '',
+          created_at: DateTime.now(),  
+        );
+        final imageUrl = await blogSupabaseSource.uploadBlogImage(
+          image: image, 
+          blog: blogModel
+        );
+        blogModel = blogModel.copyWith(
+          image_url: imageUrl,
+        );
+        final uploadedBlog = await blogSupabaseSource.updateBlog(blogModel);
+        return Right(uploadedBlog);
+      } on ServerException catch (e) {
+        return Left(Failure(e.message));
+    }
+  }
   
   @override
   Future<Either<Failure, List<Blog>>> getAllBlogs() async {
@@ -50,6 +81,16 @@ class BlogRepositoryImpl implements BlogRepository {
       return Right(blogs);
     } on ServerException catch (e) {
       return Left(Failure(e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, void>> deleteBlog(String blogId) async {
+    try {
+      await blogSupabaseSource.deleteBlog(blogId);
+      return Right(null);
+    } on ServerException catch (e) {
+      return Left(Failure(e.message));
     }
   }
 }

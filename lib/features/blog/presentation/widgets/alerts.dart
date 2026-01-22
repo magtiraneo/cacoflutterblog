@@ -1,44 +1,39 @@
-// Source - https://stackoverflow.com/a/53844053
-// Posted by Suragch, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-01-21, License - CC BY-SA 4.0
-
-import 'package:caco_flutter_blog/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-void showAlertDialog(BuildContext context) {
-  AlertDialog alert = AlertDialog();
-  // set up the buttons
-  Widget cancelButton = TextButton(
-    child: Text("Cancel"),
-    onPressed:  () {
-      Navigator.of(context, rootNavigator: true).pop(alert);
-    },
-  );
-  Widget continueButton = TextButton(
-    child: Text("Continue"),
-    onPressed:  () {
-      Navigator.of(context, rootNavigator: true).pop(alert);
-      context.read<AuthBloc>().add(AuthSignOut());
-    },
-  );
-
-  // set up the AlertDialog
-  alert = AlertDialog(
-    title: Text("Log Out"),
-    content: Text("Are you sure you want to sign out?"),
-    actions: [
-      cancelButton,
-      continueButton,
-    ],
-  );
-
-  // show the dialog
-  showDialog(
+Future<bool> showConfirmDialog({
+  required BuildContext context,
+  required String title,
+  required String content,
+  String confirmText = 'Continue',
+  String cancelText = 'Cancel',
+}) async {
+  final result = await showDialog<bool>(
     context: context,
-    builder: (BuildContext context) {
-      return alert;
+    barrierDismissible: false,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            child: Text(cancelText),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text(
+              confirmText,
+              style: const TextStyle(color: Colors.red),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
     },
   );
-}
 
+  return result ?? false;
+}

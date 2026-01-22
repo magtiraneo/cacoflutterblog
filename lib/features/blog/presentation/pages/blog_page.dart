@@ -41,8 +41,20 @@ class _BlogPageState extends State<BlogPage> {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-            showAlertDialog(context);
+            onPressed: () async {
+              final confirmed = await showConfirmDialog(
+                context: context,
+                title: 'Log Out',
+                content: 'Are you sure you want to sign out?',
+                confirmText: 'Log out',
+              );
+              if (!confirmed) return;
+              context.read<AuthBloc>().add(AuthSignOut());
+              Navigator.pushAndRemoveUntil(
+                  context, 
+                  Login.route(), 
+                  (route) => false
+                );
             },
           ),
         ],

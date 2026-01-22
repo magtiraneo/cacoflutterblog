@@ -5,8 +5,7 @@ import 'package:caco_flutter_blog/features/auth/data/datasources/auth_supabase_s
 import 'package:caco_flutter_blog/core/common/entities/user.dart';
 import 'package:caco_flutter_blog/features/auth/data/models/user_model.dart';
 import 'package:caco_flutter_blog/features/auth/domain/repository/auth_repository.dart';
-import 'package:fpdart/src/either.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'package:fpdart/fpdart.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthSupabaseSource authSupabaseSource;
@@ -88,8 +87,6 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await fn();
 
       return Right(user);
-    } on sb.AuthException catch (e) {
-      return Left(Failure(e.message));
     } on ServerException catch (e) {
       return Left(Failure(e.message));
     }

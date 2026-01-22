@@ -1,7 +1,5 @@
 import 'package:caco_flutter_blog/core/error/exception.dart';
 import 'package:caco_flutter_blog/features/auth/data/models/user_model.dart';
-import 'package:caco_flutter_blog/features/auth/presentation/pages/Login.dart';
-import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthSupabaseSource {
@@ -44,6 +42,8 @@ class AuthSupabaseSourceImpl implements AuthSupabaseSource {
         throw const ServerException('Failed to sign up user');
       }
       return UserModel.fromJson(response.user!.toJson());
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -62,6 +62,8 @@ class AuthSupabaseSourceImpl implements AuthSupabaseSource {
         throw const ServerException('User does not exist!');
       }
       return UserModel.fromJson(response.user!.toJson());
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -69,6 +71,7 @@ class AuthSupabaseSourceImpl implements AuthSupabaseSource {
   @override
   Future<UserModel?> signOut() async {
     await supabaseClient.auth.signOut();
+    return null;
   }
   @override
   Future<UserModel?> getCurrentUser() async {

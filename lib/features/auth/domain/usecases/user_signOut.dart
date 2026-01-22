@@ -1,4 +1,3 @@
-import 'package:caco_flutter_blog/core/common/entities/user.dart';
 import 'package:caco_flutter_blog/core/error/failure.dart';
 import 'package:caco_flutter_blog/core/usecase/usecase.dart';
 import 'package:caco_flutter_blog/features/auth/domain/repository/auth_repository.dart';

@@ -16,7 +16,15 @@ final class BlogUploadSuccess extends BlogState {
   
 }
 
+final class BlogUpdateSuccess extends BlogState {
+  
+}
+
 final class BlogSuccess extends BlogState {
   final List<Blog> blogs;
   BlogSuccess(this.blogs);
+}
+
+final class BlogDeleteSuccess extends BlogState {
+
 }

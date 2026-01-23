@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.10.7
+  sdk: ^3.6.0
 
 dependencies:
   copy_with_extension_gen: ^11.0.0

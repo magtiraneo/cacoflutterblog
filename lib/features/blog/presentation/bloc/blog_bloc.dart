@@ -55,6 +55,7 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     Emitter<BlogState> emit
   ) async {
     final res = await _updateBlog(UpdateBlogParams(
+      blogId: event.blogId,
       user_id: event.user_id, 
       title: event.title, 
       content: event.content, 

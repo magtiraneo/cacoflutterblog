@@ -5,6 +5,7 @@ import 'package:caco_flutter_blog/core/common/widgets/loader.dart';
 import 'package:caco_flutter_blog/core/theme/app_palette.dart';
 import 'package:caco_flutter_blog/core/utils/pick_image.dart';
 import 'package:caco_flutter_blog/core/utils/show_snackbar.dart';
+import 'package:caco_flutter_blog/features/blog/domain/entities/blog.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/pages/blog_page.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/widgets/blog_editor.dart';
@@ -13,19 +14,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UpdateBlogPage extends StatefulWidget {
-  static route() =>
-      MaterialPageRoute(builder: (context) => const UpdateBlogPage());
-  const UpdateBlogPage({super.key});
+  static route(Blog blog) =>
+      MaterialPageRoute(builder: (context) => UpdateBlogPage(blog: blog));
+  
+  final Blog blog;
+  const UpdateBlogPage({super.key, required this.blog});
 
   @override
   State<UpdateBlogPage> createState() => _UpdateBlogState();
 }
 
 class _UpdateBlogState extends State<UpdateBlogPage> {
-  final titleController = TextEditingController();
-  final contentController = TextEditingController();
+  late TextEditingController titleController;
+  late TextEditingController contentController;
   final formKey = GlobalKey<FormState>();
   File? image;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.blog.title);
+    contentController = TextEditingController(text: widget.blog.content);
+  }
 
   void selectImage() async {
     final pickedImage = await pickImage();
@@ -37,17 +47,22 @@ class _UpdateBlogState extends State<UpdateBlogPage> {
   }
 
   void updateBlog() {
-    if (formKey.currentState!.validate() && image != null) {
+    if (formKey.currentState!.validate()) {
+      if (image == null && widget.blog.image_url.isEmpty) {
+        showSnackBar(context, 'Please select an image');
+        return;
+      }
       final userId =
           (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
       final userName =
           (context.read<AppUserCubit>().state as AppUserLoggedIn).user.username;
       context.read<BlogBloc>().add(
         BlogUpdate(
+          blogId: widget.blog.id,
           user_id: userId,
           title: titleController.text.trim(),
           content: contentController.text.trim(),
-          image: image!,
+          image: image ?? File(''),
           username: userName,
         ),
       );
@@ -56,6 +71,8 @@ class _UpdateBlogState extends State<UpdateBlogPage> {
 
   @override
   void dispose() {
+    titleController.dispose();
+    contentController.dispose();
     super.dispose();
   }
 

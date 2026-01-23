@@ -13,6 +13,7 @@ abstract interface class BlogRepository {
   });
 
   Future<Either<Failure, Blog>> updateBlog({
+    required String blogId,
     required File image,
     required String title,
     required String content,

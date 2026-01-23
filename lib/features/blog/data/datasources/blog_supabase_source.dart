@@ -50,9 +50,17 @@ class BlogSupabaseSourceImpl implements BlogSupabaseSource {
   @override
   Future<String> uploadBlogImage({required File image, required BlogModel blog}) async {
     try {
+      // Delete existing image if it exists
+      try {
+        await supabaseClient.storage.from('blog-images').remove([blog.id]);
+      } catch (e) {
+        // Image might not exist yet, continue
+      }
+      
+      // Upload new image
       await supabaseClient.storage.from('blog-images').upload(
         blog.id,
-        image
+        image,
       );
 
       return supabaseClient.storage.from('blog-images').getPublicUrl(blog.id);

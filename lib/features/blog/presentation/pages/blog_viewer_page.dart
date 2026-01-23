@@ -4,9 +4,10 @@ import 'package:caco_flutter_blog/core/utils/format_date.dart';
 import 'package:caco_flutter_blog/core/utils/show_snackbar.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:caco_flutter_blog/features/blog/domain/entities/blog.dart';
-import 'package:caco_flutter_blog/features/blog/domain/usecases/update_blog.dart';
+// removed unused import
 import 'package:caco_flutter_blog/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/pages/update_blog_page.dart';
+import 'package:caco_flutter_blog/features/blog/presentation/pages/blog_page.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/widgets/alerts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class BlogViewerPage extends StatefulWidget {
 }
 
 class _BlogViewerPageState extends State<BlogViewerPage> {
+  bool _navigatedAway = false;
   @override
   void initState() {
     super.initState();
@@ -35,17 +37,27 @@ class _BlogViewerPageState extends State<BlogViewerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BlogBloc, BlogState>(
+    return BlocListener<BlogBloc, BlogState>(
       listener: (context, state) {
-        if (state is BlogFailure) {
-          showSnackBar(context, state.error);
-        } else if (state is BlogDeleteSuccess) {
-          Navigator.pop(context, true);
+        if (_navigatedAway) return;
+        if (state is BlogDeleteSuccess) {
+          _navigatedAway = true;
           showSnackBar(context, 'Blog deleted!');
+          Navigator.pushAndRemoveUntil(
+            context,
+            BlogPage.route(),
+            (route) => false,
+          );
         }
       },
-      builder: (context, state) {
-        return Scaffold(
+      child: BlocConsumer<BlogBloc, BlogState>(
+        listener: (context, state) {
+          if (state is BlogFailure) {
+            showSnackBar(context, state.error);
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
           appBar: AppBar(
             actions: [
               BlocSelector<AppUserCubit, AppUserState, bool>(
@@ -83,7 +95,7 @@ class _BlogViewerPageState extends State<BlogViewerPage> {
                   if (!isAuthor) return const SizedBox.shrink();
                 return IconButton(
                   onPressed: () {
-                      Navigator.push(context, UpdateBlogPage.route());
+                      Navigator.push(context, UpdateBlogPage.route(widget.blog));
                     }, 
                   icon: const Icon(CupertinoIcons.add_circled),
                   );
@@ -138,7 +150,8 @@ class _BlogViewerPageState extends State<BlogViewerPage> {
             ),
           ),
         );
-      },
+        },
+      ),
     );
   }
 }

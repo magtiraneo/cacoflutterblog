@@ -44,31 +44,44 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
+  @override
   Future<Either<Failure, Blog>> updateBlog({
+    required String blogId,
     required File image, 
     required String title, 
     required String content, 
     required String user_id,
     }) async {
       try {
+        var imageUrl = '';
+        
+        // Only upload new image if provided
+        if (image.path.isNotEmpty) {
+          imageUrl = await blogSupabaseSource.uploadBlogImage(
+            image: image,
+            blog: BlogModel(
+              id: blogId,
+              user_id: user_id,
+              title: title,
+              content: content,
+              image_url: '',
+              username: '',
+              created_at: DateTime.now(),
+            ),
+          );
+        }
+        
         BlogModel blogModel = BlogModel(
-          id: const Uuid().v1(), 
+          id: blogId, 
           user_id: user_id, 
           title: title, 
           content: content,
-          image_url: '', 
+          image_url: imageUrl.isNotEmpty ? imageUrl : '', 
           username: '',
           created_at: DateTime.now(),  
         );
-        final imageUrl = await blogSupabaseSource.uploadBlogImage(
-          image: image, 
-          blog: blogModel
-        );
-        blogModel = blogModel.copyWith(
-          image_url: imageUrl,
-        );
-        final uploadedBlog = await blogSupabaseSource.updateBlog(blogModel);
-        return Right(uploadedBlog);
+        final updatedBlog = await blogSupabaseSource.updateBlog(blogModel);
+        return Right(updatedBlog);
       } on ServerException catch (e) {
         return Left(Failure(e.message));
     }

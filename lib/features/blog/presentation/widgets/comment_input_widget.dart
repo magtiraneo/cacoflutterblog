@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:caco_flutter_blog/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:caco_flutter_blog/core/utils/show_snackbar.dart';
@@ -18,7 +18,7 @@ class CommentInputWidget extends StatefulWidget {
 
 class _CommentInputWidgetState extends State<CommentInputWidget> {
   final TextEditingController _controller = TextEditingController();
-  File? _selectedImage;
+  XFile? _selectedImage;
 
   @override
   void dispose() {
@@ -32,7 +32,7 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
 
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _selectedImage = pickedFile;
       });
     }
   }
@@ -91,11 +91,21 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _selectedImage!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
+                          child: FutureBuilder<List<int>>(
+                            future: _selectedImage!.readAsBytes(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Image.memory(
+                                  Uint8List.fromList(snapshot.data!),
+                                  height: 150,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                );
+                              }
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
                           ),
                         ),
                         Positioned(

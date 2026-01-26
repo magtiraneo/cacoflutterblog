@@ -12,7 +12,7 @@ class CommentAdd extends CommentEvent {
   final String userId;
   final String content;
   final String? username;
-  final File? image;
+  final XFile? image;
 
   CommentAdd({
     required this.blogId,

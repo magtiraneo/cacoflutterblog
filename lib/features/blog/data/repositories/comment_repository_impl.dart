@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:caco_flutter_blog/core/error/exception.dart';
 import 'package:caco_flutter_blog/core/error/failure.dart';
 import 'package:caco_flutter_blog/core/network/connection_checker.dart';
@@ -8,6 +6,7 @@ import 'package:caco_flutter_blog/features/blog/data/models/comment_model.dart';
 import 'package:caco_flutter_blog/features/blog/domain/entities/comment.dart';
 import 'package:caco_flutter_blog/features/blog/domain/repositories/comment_repository.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CommentRepositoryImpl implements CommentRepository {
@@ -21,7 +20,7 @@ class CommentRepositoryImpl implements CommentRepository {
     required String userId,
     required String content,
     String? username,
-    File? image,
+    XFile? image,
   }) async {
     try {
       if (!await connectionChecker.isConnected) {

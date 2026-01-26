@@ -27,7 +27,6 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
         _deleteBlog = deleteBlog,
         _updateBlog = updateBlog,
         super(BlogInitial()) {
-    on<BlogEvent>((event, emit) => emit(BlogLoading()));
     on<BlogUpload>(_onBlogUpload);
     on<BlogUpdate>(_onBlogUpdate);
     on<BlogFetchAllBlogs>(_onFetchAllBlogs);
@@ -84,10 +83,22 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     BlogDelete event, 
     Emitter<BlogState> emit
   ) async {
+    emit(BlogLoading());
     final res = await _deleteBlog(event.blogId);
-    res.fold(
-      (l) => emit(BlogFailure(l.message)),
-      (_) => emit(BlogDeleteSuccess())
-    );
+    
+    if (res.isRight()) {
+      emit(BlogDeleteSuccess());
+      // Fetch updated blog list after successful deletion
+      final blogRes = await _getAllBlogs(NoParams());
+      blogRes.fold(
+        (l) => emit(BlogFailure(l.message)), 
+        (r) => emit(BlogSuccess(r)),
+      );
+    } else {
+      res.fold(
+        (l) => emit(BlogFailure(l.message)),
+        (_) => null,
+      );
+    }
   }
 }

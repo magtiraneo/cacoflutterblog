@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:caco_flutter_blog/core/error/exception.dart';
 import 'package:caco_flutter_blog/features/blog/data/models/blog_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:universal_io/io.dart';
 
 abstract interface class BlogSupabaseSource {
   Future<BlogModel> uploadBlog(BlogModel blog);
@@ -83,11 +82,6 @@ class BlogSupabaseSourceImpl implements BlogSupabaseSource {
   @override
   Future<String> uploadBlogImage({required XFile image, required BlogModel blog}) async {
     try {
-      final file = File(XFile(image.path).path);
-      if (!await file.exists()) {
-        throw ServerException('Image file does not exist');
-      }
-      
       final bytes = await image.readAsBytes();
       if (bytes.isEmpty) {
         throw ServerException('Image file is empty');
@@ -116,7 +110,8 @@ class BlogSupabaseSourceImpl implements BlogSupabaseSource {
     try {
       final blogs = await supabaseClient
         .from('posts')
-        .select('*, profiles (username)');
+        .select('*, profiles (username)')
+        .order('created_at', ascending: false);
       return blogs.map((blog) => BlogModel.fromJson(blog).copyWith(
         username: blog['profiles']['username']
       )).toList();
@@ -129,12 +124,15 @@ class BlogSupabaseSourceImpl implements BlogSupabaseSource {
   
   @override
   Future<void> deleteBlog(String blogId) async {
-    final res = await supabaseClient
-      .from('posts')
-      .delete()
-      .eq('id', blogId);
-    if (res.error != null) {
-      throw ServerException(res.error!.message);
+    try {
+      await supabaseClient
+        .from('posts')
+        .delete()
+        .eq('id', blogId);
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
     }
   }
 }

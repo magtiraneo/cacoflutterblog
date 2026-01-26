@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:caco_flutter_blog/features/blog/domain/entities/comment.dart';
 import 'package:caco_flutter_blog/features/blog/domain/usecases/add_comment.dart';
 import 'package:caco_flutter_blog/features/blog/domain/usecases/delete_comment.dart';
 import 'package:caco_flutter_blog/features/blog/domain/usecases/get_comments.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'comment_event.dart';
 part 'comment_state.dart';

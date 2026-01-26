@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:caco_flutter_blog/core/error/failure.dart';
 import 'package:caco_flutter_blog/core/usecase/usecase.dart';
 import 'package:caco_flutter_blog/features/blog/domain/entities/comment.dart';
 import 'package:caco_flutter_blog/features/blog/domain/repositories/comment_repository.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddComment implements UseCase<Comment, AddCommentParams> {
   final CommentRepository commentRepository;
@@ -27,7 +26,7 @@ class AddCommentParams {
   final String userId;
   final String content;
   final String? username;
-  final File? image;
+  final XFile? image;
 
   AddCommentParams({
     required this.blogId,

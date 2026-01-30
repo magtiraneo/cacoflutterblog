@@ -126,7 +126,7 @@ class _BlogCardState extends State<BlogCard> {
                                   value: 'edit',
                                   child: Row(
                                     children: [
-                                      Icon(CupertinoIcons.add_circled,
+                                      Icon(Icons.add_circle,
                                           size: 18),
                                       SizedBox(width: 8),
                                       Text('Edit'),

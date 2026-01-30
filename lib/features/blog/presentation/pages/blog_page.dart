@@ -42,7 +42,7 @@ class _BlogPageState extends State<BlogPage> {
             onPressed: () {
               Navigator.push(context, WriteNewBlog.route());
             }, 
-            icon: const Icon(CupertinoIcons.add_circled),
+            icon: const Icon(Icons.add_circle),
           ),
           IconButton(
             icon: const Icon(Icons.logout),

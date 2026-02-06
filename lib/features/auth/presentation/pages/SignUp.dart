@@ -1,15 +1,17 @@
 import 'package:caco_flutter_blog/core/common/widgets/loader.dart';
+import 'package:caco_flutter_blog/core/theme/app_palette.dart';
 import 'package:caco_flutter_blog/core/utils/show_snackbar.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/pages/Login.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/widgets/auth_button.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/widgets/auth_field.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/pages/blog_page.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUp extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const Login());
+  static route() => MaterialPageRoute(builder: (context) => const SignUp());
   const SignUp({super.key});
 
   @override
@@ -41,6 +43,12 @@ class _SignUpState extends State<SignUp> {
             listener: (context, state) {
               if(state is AuthFailure){
                 showSnackBar(context, state.message);
+              } else if(state is AuthSuccess){
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  BlogPage.route(),
+                  (route) => false,
+                );
               }
             },
             builder: (context, state) {
@@ -86,31 +94,6 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    /*
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context, 
-                                SignUp.route()
-                              );
-                            },
-                            
-                            child: RichText(
-                              text: TextSpan(
-                              text: 'Already have an account? ',
-                              style: const TextStyle(color: Colors.black),
-                              children: [
-                                TextSpan(
-                                  text: 'Login',
-                                  style: const TextStyle(
-                                    color: AppPalette.primaryColor,
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                  // Add gesture recognizer if needed for navigation
-                                )
-                              ]
-                            )),
-                          ) */
                   ],
                 ),
               );

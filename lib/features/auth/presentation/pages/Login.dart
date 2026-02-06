@@ -6,6 +6,7 @@ import 'package:caco_flutter_blog/features/auth/presentation/pages/SignUp.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/widgets/auth_button.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/widgets/auth_field.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/pages/blog_page.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -92,20 +93,22 @@ class _LoginState extends State<Login> {
                       onTap: () {
                         Navigator.push(context, SignUp.route());
                       },
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Don\'t have an account? ',
-                          style: const TextStyle(color: Colors.black),
-                          children: [
-                            TextSpan(
-                              text: 'Sign up',
-                              style: const TextStyle(
-                                color: AppPalette.primaryColor,
-                                fontWeight: FontWeight.bold,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Don\'t have an account? ',
+                            style: const TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(
+                                text: 'Sign up',
+                                style: const TextStyle(
+                                  color: AppPalette.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              // Add gesture recognizer if needed for navigation
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

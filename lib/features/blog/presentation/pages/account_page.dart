@@ -128,8 +128,6 @@ class _AccountPageState extends State<AccountPage> {
                         _buildDetailRow('Username', user.username),
                         Divider(color: Colors.grey.shade300),
                         _buildDetailRow('Email', user.email),
-                        Divider(color: Colors.grey.shade300),
-                        _buildDetailRow('User ID', user.id),
                       ],
                     ),
                   ),
@@ -163,7 +161,7 @@ class _AccountPageState extends State<AccountPage> {
                           (route) => false,
                         );
                       },
-                      icon: const Icon(CupertinoIcons.arrow_right_square),
+                      icon: const Icon(Icons.logout),
                       label: const Text('Sign Out'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,

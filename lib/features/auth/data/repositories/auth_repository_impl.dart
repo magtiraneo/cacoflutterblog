@@ -18,22 +18,37 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, User>> currentUser() async {
     try {
+      final session = authSupabaseSource.currentSession;
+      if (session == null) {
+        return Left(Failure('No user logged in'));
+      }
+
       if (!await (connectionChecker.isConnected)) {
-        final session = authSupabaseSource.currentSession;
-          if (session == null) {
-            return Left(Failure('No user logged in'));
-          }
+        // Fallback when offline - get username from session user metadata
+        final username = session.user.userMetadata?['username'] as String? ?? '';
         return Right(UserModel(
           id: session.user.id,
           email: session.user.email ?? '',
-          username: ''
+          username: username
         ));
       }
-      final user = await authSupabaseSource.getCurrentUser();
-      if (user == null) {
-        return Left(Failure('No user logged in'));
+
+      try {
+        final user = await authSupabaseSource.getCurrentUser();
+        if (user != null) {
+          return Right(user);
+        }
+      } on ServerException {
+        // If profiles query fails, fall back to metadata
       }
-      return Right(user);
+
+      // Fallback to session data with username from metadata
+      final username = session.user.userMetadata?['username'] as String? ?? '';
+      return Right(UserModel(
+        id: session.user.id,
+        email: session.user.email ?? '',
+        username: username
+      ));
     } on ServerException catch (e) {
       return Left(Failure(e.message));
     }

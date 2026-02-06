@@ -4,6 +4,7 @@ import 'package:caco_flutter_blog/core/utils/show_snackbar.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:caco_flutter_blog/features/auth/presentation/pages/Login.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/bloc/blog_bloc.dart';
+import 'package:caco_flutter_blog/features/blog/presentation/pages/account_page.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/pages/write_new_blog.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/widgets/alerts.dart';
 import 'package:caco_flutter_blog/features/blog/presentation/widgets/blog_card.dart';
@@ -45,24 +46,10 @@ class _BlogPageState extends State<BlogPage> {
             icon: const Icon(Icons.add_circle),
           ),
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              final confirmed = await showConfirmDialog(
-                context: context,
-                title: 'Log Out',
-                content: 'Are you sure you want to sign out?',
-                confirmText: 'Log out',
-              );
-              if (!confirmed) return;
-              if (!context.mounted) return;
-              context.read<AuthBloc>().add(AuthSignOut());
-              if (!context.mounted) return;
-              Navigator.pushAndRemoveUntil(
-                  context, 
-                  Login.route(), 
-                  (route) => false
-                );
+            onPressed: () {
+              Navigator.push(context, AccountPage.route());
             },
+            icon: const Icon(Icons.person),
           ),
         ],
       ),
